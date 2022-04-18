@@ -17,7 +17,7 @@ def random_service():
 class SearchIdView(generics.CreateAPIView):
     serializer_class = SearchIdSerializer
 
-    def create(request, *args, **kwargs):
+    def create(request, exchange_rate, *args, **kwargs):
         req1 = requests.post('http://127.0.0.1:8990/search')
         all_flights = req1.json()
         flight_id = random.randrange(len(all_flights))
