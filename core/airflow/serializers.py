@@ -6,7 +6,8 @@ class SearchResultSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = SearchResult
-        fields = "__all__"
+        # fields = "__all__"
+        exclude = ['id']
 
 
 

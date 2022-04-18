@@ -14,7 +14,7 @@ def random_service():
     return service
 
 
-class SearchResultView(generics.CreateAPIView):
+class SearchIdView(generics.CreateAPIView):
     serializer_class = SearchIdSerializer
 
     def create(request, *args, **kwargs):
@@ -36,3 +36,10 @@ class SearchResultView(generics.CreateAPIView):
         search_result.save()
 
         return Response({"search_id": search_id})
+
+
+class SearchResultView(generics.ListAPIView):
+    """View all searches ordering by price"""
+    serializer_class = SearchResultSerializer
+    queryset = SearchResult.objects.all()
+    
