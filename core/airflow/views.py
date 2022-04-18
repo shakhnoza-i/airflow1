@@ -1,11 +1,13 @@
 import random
 import requests
 import uuid
+from django.db.models import Case, When, F
 from rest_framework import generics
 from rest_framework.response import Response
 
 from airflow.models import SearchResult
 from airflow.serializers import SearchResultSerializer, SearchIdSerializer
+from airflow.tasks import CurrencyRate
 
 
 def random_service():
@@ -25,6 +27,8 @@ class SearchIdView(generics.CreateAPIView):
         search_id = str(uuid.uuid4())
         price = flight.get('pricing').get('total')
         currency = flight.get('pricing').get('currency')
+        # rate1 = CurrencyRate()
+        # rate = rate1.curr
 
         search_result = SearchResult.objects.create(
             search_id = search_id,
@@ -41,5 +45,15 @@ class SearchIdView(generics.CreateAPIView):
 class SearchResultView(generics.ListAPIView):
     """View all searches ordering by price"""
     serializer_class = SearchResultSerializer
-    queryset = SearchResult.objects.all()
+    # queryset = SearchResult.objects.all()
+
+    rate = CurrencyRate()
+    currency_rate = rate.curr
+
+    queryset = SearchResult.objects.annotate(
+    price_kzt=Case(
+        When(currency="EUR", then=F('price') * currency_rate ),
+        # Assumes that the only other currency is KZT
+        default=F('price')
+    )).order_by('price_kzt')
     

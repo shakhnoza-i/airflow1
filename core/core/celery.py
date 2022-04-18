@@ -13,14 +13,13 @@ app.conf.update(timezone = 'Asia/Almaty')
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
-# app.config_from_object('django.conf:settings')
+
 app.config_from_object('django.conf:settings')
 app.conf.beat_schedule = {
     'get-rate-every-day-at-12am':{
         'task': 'airflow.tasks.CurrencyRate',
-        'schedule': 30,
-        # 'schedule': crontab(hour=12, minute=00),
-        # 'args':
+        # 'schedule': 30,
+        'schedule': crontab(hour=12, minute=00),
     }
 }
 app.autodiscover_tasks(settings.INSTALLED_APPS)
