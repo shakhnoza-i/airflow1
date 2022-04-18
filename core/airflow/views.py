@@ -27,14 +27,12 @@ class SearchIdView(generics.CreateAPIView):
         else:
             req1 = requests.post('http://127.0.0.1:8991/search')
             all_flights = req1.json()
-            
+
         flight_id = random.randrange(len(all_flights))
         flight = all_flights[flight_id]
         search_id = str(uuid.uuid4())
         price = flight.get('pricing').get('total')
         currency = flight.get('pricing').get('currency')
-        # rate1 = CurrencyRate()
-        # rate = rate1.curr
 
         search_result = SearchResult.objects.create(
             search_id = search_id,
@@ -52,3 +50,9 @@ class SearchResultView(generics.ListAPIView):
     """View all searches ordering by price"""
     serializer_class = SearchOrderSerializer
     queryset = SearchResult.objects.all().order_by('price')
+
+
+class SearchDetail(generics.RetrieveAPIView):
+
+    queryset = SearchResult.objects.all()
+    serializer_class = SearchResultSerializer
