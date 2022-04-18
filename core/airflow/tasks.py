@@ -7,14 +7,9 @@ from celery.utils.log import get_task_logger
 logger = get_task_logger(__name__)
 from core.celery import app
 
-@shared_task(bind=True)
-def test_func(self):
-    for i in range(1, 10):
-        print(i)
-    return "done"
 
 class CurrencyRate(Task):
-    
+
     def __init__(self):
         self.curr = 491
 
