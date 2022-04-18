@@ -1,5 +1,4 @@
 import requests
-import lxml.html
 from bs4 import BeautifulSoup
 from datetime import datetime
 from celery import shared_task, Task
@@ -15,20 +14,19 @@ def test_func(self):
     return "done"
 
 class CurrencyRate(Task):
+    
     def __init__(self):
-        self.curr = 10
-        print(self.curr)
+        self.curr = 491
+
     def run(self, *args, **kwargs):
         date = datetime.today().strftime('%d.%m.%Y')
         r = requests.get('https://www.nationalbank.kz/rss/get_rates.cfm?fdate=%s' % date)
-        # self.curr += 1
-        # logger.info(self.curr)
         login_page = r.text.encode('utf-8')
-        doc = lxml.html.fromstring(login_page)
-        self.curr = doc.xpath('/rates/item[12]/description')
-
+        soup = BeautifulSoup(login_page)
+        desc = soup.find_all('description')
+        self.curr = desc[12].text[0:-1]
         print(self.curr)
-        return date
+        return self.curr
 
 
 app.register_task(CurrencyRate())
