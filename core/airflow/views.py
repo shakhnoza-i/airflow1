@@ -6,7 +6,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 
 from airflow.models import SearchResult
-from airflow.serializers import SearchResultSerializer, SearchIdSerializer
+from airflow.serializers import SearchOrderSerializer, SearchResultSerializer, SearchIdSerializer
 from airflow.tasks import CurrencyRate
 
 
@@ -44,16 +44,5 @@ class SearchIdView(generics.CreateAPIView):
 
 class SearchResultView(generics.ListAPIView):
     """View all searches ordering by price"""
-    serializer_class = SearchResultSerializer
-    # queryset = SearchResult.objects.all()
-
-    rate = CurrencyRate()
-    currency_rate = rate.curr
-
-    queryset = SearchResult.objects.annotate(
-    price_kzt=Case(
-        When(currency="EUR", then=F('price') * currency_rate ),
-        # Assumes that the only other currency is KZT
-        default=F('price')
-    )).order_by('price_kzt')
-    
+    serializer_class = SearchOrderSerializer
+    queryset = SearchResult.objects.all().order_by('price')
