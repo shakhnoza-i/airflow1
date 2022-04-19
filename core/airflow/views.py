@@ -54,5 +54,7 @@ class SearchResultView(generics.ListAPIView):
 
 class SearchDetail(generics.RetrieveAPIView):
 
-    queryset = SearchResult.objects.all()
-    serializer_class = SearchResultSerializer
+    def get(self, request, uuid, *args, **kwargs):
+        search = SearchResult.objects.get(search_id=uuid)
+        serializer = SearchResultSerializer(search)
+        return Response(serializer.data)

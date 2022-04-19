@@ -18,7 +18,6 @@ app.config_from_object('django.conf:settings')
 app.conf.beat_schedule = {
     'get-rate-every-day-at-12am':{
         'task': 'airflow.tasks.CurrencyRate',
-        # 'schedule': 30,
         'schedule': crontab(hour=12, minute=00),
     }
 }
