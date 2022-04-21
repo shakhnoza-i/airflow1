@@ -6,7 +6,8 @@ from rest_framework import generics
 from rest_framework.response import Response
 
 from airflow.models import SearchResult
-from airflow.serializers import SearchOrderSerializer, SearchResultSerializer, SearchIdSerializer
+from airflow.serializers import (SearchOrderSerializer, SearchResultSerializer, 
+                                 SearchIdSerializer, SearchOrderEURSerializer)
 from airflow.tasks import CurrencyRate
 
 
@@ -54,7 +55,10 @@ class SearchResultView(generics.ListAPIView):
 
 class SearchDetail(generics.RetrieveAPIView):
 
-    def get(self, request, uuid, *args, **kwargs):
+    def get(self, request, uuid, currency, *args, **kwargs):
         search = SearchResult.objects.get(search_id=uuid)
-        serializer = SearchResultSerializer(search)
+        if currency == 'KZT':
+            serializer = SearchOrderSerializer(search)
+        if currency == 'EUR':
+            serializer = SearchOrderEURSerializer(search)
         return Response(serializer.data)
