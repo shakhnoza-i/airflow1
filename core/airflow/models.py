@@ -15,6 +15,7 @@ class SearchResult(models.Model):
         return str(self.search_id)
 
 
-class Currency(models.Model):
-    name = models.CharField(max_length=255, unique=True, blank=False, null=False)
-    created_date = models.DateTimeField(auto_now_add=True, blank=True)
+class ExchangeRate(models.Model):
+    currency = models.CharField(max_length=10, blank=False, null=False)
+    created_date = models.DateField(auto_now_add=True, blank=True)
+    rate = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)

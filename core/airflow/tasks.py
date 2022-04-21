@@ -2,9 +2,17 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 from celery import shared_task, Task
-from celery.utils.log import get_task_logger
+
 
 from core.celery import app
+from airflow.models import ExchangeRate
+
+
+@shared_task(bind=True)
+def test_func(self):
+    for i in range(1, 10):
+        print(i)
+    return "done"
 
 
 class CurrencyRate(Task):
@@ -19,7 +27,13 @@ class CurrencyRate(Task):
         soup = BeautifulSoup(login_page)
         desc = soup.find_all('description')
         self.curr = desc[12].text[0:-1]
-        print(self.curr)
+
+        exchange = ExchangeRate.objects.create(
+            currency = 'EUR',
+            created_date = date,
+            rate = self.curr
+        )
+        exchange.save()
         return self.curr
 
 

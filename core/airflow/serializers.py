@@ -1,14 +1,7 @@
 from rest_framework import serializers
-from airflow.models import SearchResult
+from airflow.models import SearchResult, ExchangeRate
 from airflow.tasks import CurrencyRate
 from django.db.models import Case, When, F
-
-
-class SearchResultSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = SearchResult
-        exclude = ['id']
 
 
 class SearchIdSerializer(serializers.ModelSerializer):
@@ -63,3 +56,10 @@ class SearchOrderEURSerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchResult
         fields = ['search_id', 'price', 'currency', 'items']
+
+
+class ExchangeRateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ExchangeRate
+        fields = '__all__'

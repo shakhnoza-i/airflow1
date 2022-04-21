@@ -1,14 +1,12 @@
 import random
 import requests
 import uuid
-from django.db.models import Case, When, F
 from rest_framework import generics
 from rest_framework.response import Response
 
-from airflow.models import SearchResult
-from airflow.serializers import (SearchOrderSerializer, SearchResultSerializer, 
+from airflow.models import SearchResult, ExchangeRate
+from airflow.serializers import (SearchOrderSerializer, ExchangeRateSerializer,
                                  SearchIdSerializer, SearchOrderEURSerializer)
-from airflow.tasks import CurrencyRate
 
 
 def random_service():
@@ -62,3 +60,9 @@ class SearchDetail(generics.RetrieveAPIView):
         if currency == 'EUR':
             serializer = SearchOrderEURSerializer(search)
         return Response(serializer.data)
+
+
+class ExchangeRateView(generics.ListAPIView):
+
+    serializer_class = ExchangeRateSerializer
+    queryset = ExchangeRate.objects.all()
