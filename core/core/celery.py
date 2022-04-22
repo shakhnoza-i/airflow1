@@ -17,9 +17,9 @@ app.conf.update(timezone = 'Asia/Almaty')
 app.config_from_object('django.conf:settings')
 app.conf.beat_schedule = {
     'get-rate-every-day-at-12am':{
-        'task': 'airflow.tasks.test_func',
+        'task': 'airflow.tasks.currency_rate',
         # 'schedule': crontab(hour=00, minute=00),
-        'schedule': 10,
+        'schedule': 15,
     }
 }
 app.autodiscover_tasks(settings.INSTALLED_APPS)

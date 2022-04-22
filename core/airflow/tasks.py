@@ -15,26 +15,19 @@ def test_func(self):
     return "done"
 
 
-class CurrencyRate(Task):
+@shared_task(bind=True)
+def currency_rate(self, *args, **kwargs):
+    date = datetime.today().strftime('%d.%m.%Y')
+    r = requests.get('https://www.nationalbank.kz/rss/get_rates.cfm?fdate=%s' % date)
+    login_page = r.text.encode('utf-8')
+    soup = BeautifulSoup(login_page)
+    desc = soup.find_all('description')
+    curr = desc[12].text[0:-1]
 
-    def __init__(self):
-        self.curr = 491
-
-    def run(self, *args, **kwargs):
-        date = datetime.today().strftime('%d.%m.%Y')
-        r = requests.get('https://www.nationalbank.kz/rss/get_rates.cfm?fdate=%s' % date)
-        login_page = r.text.encode('utf-8')
-        soup = BeautifulSoup(login_page)
-        desc = soup.find_all('description')
-        self.curr = desc[12].text[0:-1]
-
-        exchange = ExchangeRate.objects.create(
-            currency = 'EUR',
-            created_date = date,
-            rate = self.curr
-        )
-        exchange.save()
-        return self.curr
-
-
-app.register_task(CurrencyRate())
+    exchange = ExchangeRate.objects.create(
+        currency = 'EUR',
+        created_date = date,
+        rate = curr
+    )
+    exchange.save()
+    return curr
